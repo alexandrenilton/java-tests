@@ -6,8 +6,8 @@ import com.edu.abelem.entity.MovieRental;
 
 public class MovieRentalDAOFake implements MovieRentalDAO {
 
-	public void salvar(MovieRental locacao) {
-		System.out.println("LocacaoDAOFake.salvar() ok");
+	public void save(MovieRental locacao) {
+		System.out.println("MovieRentalDAOFake.save() ok");
 	}
 
 	public List<MovieRental> getDelayedRentals() {

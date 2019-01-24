@@ -5,41 +5,43 @@ import java.util.List;
 
 public class MovieRental {
 
-	private User usuario;
-	private List<Movie> filmes;
-	private Date dataLocacao;
-	private Date dataRetorno;
-	private Double valor;
+	private User user;
+	private List<Movie> movies;
+	private Date rentalDate;
+	private Date rentalReturnDate;
+	private Double price;
 	
-	public User getUsuario() {
-		return usuario;
+	public User getUser() {
+		return user;
 	}
-	public void setUsuario(User usuario) {
-		this.usuario = usuario;
+	public void setUser(User user) {
+		this.user = user;
 	}
-	public Date getDataLocacao() {
-		return dataLocacao;
+	public List<Movie> getMovies() {
+		return movies;
 	}
-	public void setDataLocacao(Date dataLocacao) {
-		this.dataLocacao = dataLocacao;
+	public void setMovies(List<Movie> movies) {
+		this.movies = movies;
 	}
-	public Date getDataRetorno() {
-		return dataRetorno;
+	public Date getRentalDate() {
+		return rentalDate;
 	}
-	public void setDataRetorno(Date dataRetorno) {
-		this.dataRetorno = dataRetorno;
+	public void setRentalDate(Date rentalDate) {
+		this.rentalDate = rentalDate;
 	}
-	public Double getValor() {
-		return valor;
+	public Date getRentalReturnDate() {
+		return rentalReturnDate;
 	}
-	public void setValor(Double valor) {
-		this.valor = valor;
+	public void setRentalReturnDate(Date rentalReturnDate) {
+		this.rentalReturnDate = rentalReturnDate;
 	}
-	public List<Movie> getFilmes() {
-		return filmes;
+	public Double getPrice() {
+		return price;
 	}
-	public void setFilmes(List<Movie> filmes) {
-		this.filmes = filmes;
+	public void setPrice(Double price) {
+		this.price = price;
 	}
+	
+
 
 }

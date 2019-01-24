@@ -1,6 +1,6 @@
-package br.ce.wcaquino.servicos;
+package com.edu.abelem.services;
 
-import static br.ce.wcaquino.builders.MovieBuilder.oneMovie;
+import static com.edu.abelem.builders.MovieBuilder.oneMovie;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -25,7 +25,7 @@ import com.edu.abelem.exceptions.MovieRentalException;
 import com.edu.abelem.services.MovieRentalService;
 
 @RunWith(Parameterized.class)
-public class CalculoValorLocacaoTest {
+public class CalcRentalValueTest {
 	private MovieRentalService service; 
 	
 	@Parameter(value=0)
@@ -38,9 +38,9 @@ public class CalculoValorLocacaoTest {
 	@Before
 	public void setup() {
 		service = new MovieRentalService();
-		// LocacaoDAO dao = new LocacaoDAOFake();
+		// MovieRentalDAO dao = new MovieRentalDAOFake();
 		MovieRentalDAO dao = Mockito.mock(MovieRentalDAO.class);
-		service.setLocacaoDAO(dao);
+		service.setMovieRentalDAO(dao);
 	}
 	
 	private static Movie m1 = oneMovie().now();
@@ -73,10 +73,10 @@ public class CalculoValorLocacaoTest {
 	@Test
 	public void shouldCalcRentValueWithDiscounts() throws MovieOutOfStockException, MovieRentalException {
 		// scene
-		User usuario = new User("User 1");
+		User user = new User("User 1");
 		// action
-		MovieRental result = service.alugarFilme(usuario, filmes); // filmes está no @Parameter(value=0) onde o @ParameterS está marcado, logo a 1 posição do array
+		MovieRental result = service.rentMovie(user, filmes); // movies está no @Parameter(value=0) onde o @ParameterS está marcado, logo a 1 posição do array
 		// evaluation
-		assertThat(result.getValor(), is(rentValue) ); // rentValue está no @Parameter(value=1) onde o @ParameterS está marcado, logo, a 2 posição do array
+		assertThat(result.getPrice(), is(rentValue) ); // rentValue está no @Parameter(value=1) onde o @ParameterS está marcado, logo, a 2 posição do array
 	}
 }

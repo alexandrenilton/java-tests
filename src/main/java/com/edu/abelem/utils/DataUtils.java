@@ -18,7 +18,7 @@ public class DataUtils {
 	 * @param dias
 	 * @return
 	 */
-	public static Date adicionarDias(Date data, int dias) {
+	public static Date addDays(Date data, int dias) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(data);
 		calendar.add(DAY_OF_MONTH, dias);
@@ -33,7 +33,7 @@ public class DataUtils {
 	 * @return Data atualizada
 	 */
 	public static Date obterDataComDiferencaDias(int dias) {
-		return adicionarDias(new Date(), dias);
+		return addDays(new Date(), dias);
 	}
 	
 	/**
@@ -44,7 +44,7 @@ public class DataUtils {
 	 * @param ano
 	 * @return
 	 */
-	public static Date obterData(int dia, int mes, int ano){
+	public static Date getDate(int dia, int mes, int ano){
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(DAY_OF_MONTH, dia);
 		calendar.set(MONTH, mes - 1);
@@ -60,7 +60,7 @@ public class DataUtils {
 	 * @param data2
 	 * @return
 	 */
-	public static boolean isMesmaData(Date data1, Date data2) {
+	public static boolean isSameDate(Date data1, Date data2) {
 		Calendar calendar1 = Calendar.getInstance();
 		calendar1.setTime(data1);
 		Calendar calendar2 = Calendar.getInstance();
@@ -77,7 +77,7 @@ public class DataUtils {
 	 * @param diaSemana <code>true</code> caso seja o dia da semana desejado, <code>false</code> em caso contrário 
 	 * @return
 	 */
-	public static boolean verificarDiaSemana(Date data, int diaSemana) {
+	public static boolean checkDayOfWeek(Date data, int diaSemana) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(data);
 		return calendar.get(DAY_OF_WEEK) == diaSemana;

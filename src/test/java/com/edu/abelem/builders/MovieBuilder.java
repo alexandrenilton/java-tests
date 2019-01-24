@@ -1,4 +1,4 @@
-package br.ce.wcaquino.builders;
+package com.edu.abelem.builders;
 
 import com.edu.abelem.entity.Movie;
 
@@ -12,9 +12,9 @@ public class MovieBuilder {
 	public static MovieBuilder oneMovie() {
 		MovieBuilder builder = new MovieBuilder();
 		builder.movie = new Movie();
-		builder.movie.setEstoque(2);
-		builder.movie.setNome("Nome 1");
-		builder.movie.setPrecoLocacao(4.0);
+		builder.movie.setStock(2);
+		builder.movie.setName("Nome 1");
+		builder.movie.setRentalPrice(4.0);
 		
 		return builder;
 	}
@@ -22,16 +22,16 @@ public class MovieBuilder {
 	public static MovieBuilder oneMovieOutstock() {
 		MovieBuilder builder = new MovieBuilder();
 		builder.movie = new Movie();
-		builder.movie.setEstoque(0);
-		builder.movie.setNome("Nome 2");
-		builder.movie.setPrecoLocacao(4.0);
+		builder.movie.setStock(0);
+		builder.movie.setName("Nome 2");
+		builder.movie.setRentalPrice(4.0);
 		
 		return builder;
 	}
 
 	
 	public MovieBuilder outstock() {
-		movie.setEstoque(0);
+		movie.setStock(0);
 		return this;
 	}
 	

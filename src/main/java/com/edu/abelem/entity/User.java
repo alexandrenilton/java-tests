@@ -2,27 +2,27 @@ package com.edu.abelem.entity;
 
 public class User {
 
-	private String nome;
+	private String name;
 	
 	public User() {}
 	
-	public User(String nome) {
-		this.nome = nome;
+	public User(String name) {
+		this.name = name;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getName() {
+		return name;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setNome(String name) {
+		this.name = name;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
@@ -36,10 +36,10 @@ public class User {
 			return false;
 		//comparando pelo nome..
 		User other = (User) obj;
-		if (nome == null) {
-			if (other.nome != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!nome.equals(other.nome))
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}

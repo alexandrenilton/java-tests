@@ -1,4 +1,4 @@
-package br.ce.wcaquino.matchers;
+package com.edu.abelem.matchers;
 
 import java.util.Date;
 
@@ -22,7 +22,7 @@ public class DateDiffDaysMatcher extends TypeSafeMatcher<Date> {
 
 	@Override
 	protected boolean matchesSafely(Date data) {
-		return DataUtils.isMesmaData(data, DataUtils.obterDataComDiferencaDias(qtdDays));
+		return DataUtils.isSameDate(data, DataUtils.obterDataComDiferencaDias(qtdDays));
 	}
 
 }

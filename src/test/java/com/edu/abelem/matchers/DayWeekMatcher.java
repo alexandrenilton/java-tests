@@ -1,4 +1,4 @@
-package br.ce.wcaquino.matchers;
+package com.edu.abelem.matchers;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -9,11 +9,11 @@ import org.hamcrest.TypeSafeMatcher;
 
 import com.edu.abelem.utils.DataUtils;
 
-public class DiaSemanaMatcher extends TypeSafeMatcher<Date> {
+public class DayWeekMatcher extends TypeSafeMatcher<Date> {
 	
 	private Integer dayWeek;
 	
-	public DiaSemanaMatcher(Integer dayWeek) {
+	public DayWeekMatcher(Integer dayWeek) {
 		this.dayWeek = dayWeek;
 	}
 	
@@ -30,7 +30,7 @@ public class DiaSemanaMatcher extends TypeSafeMatcher<Date> {
 
 	@Override
 	protected boolean matchesSafely(Date data) {
-		return DataUtils.verificarDiaSemana(data, dayWeek);
+		return DataUtils.checkDayOfWeek(data, dayWeek);
 	}
 
 }

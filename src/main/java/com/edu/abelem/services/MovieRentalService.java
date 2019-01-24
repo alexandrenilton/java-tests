@@ -1,6 +1,6 @@
 package com.edu.abelem.services;
 
-import static com.edu.abelem.utils.DataUtils.adicionarDias;
+import static com.edu.abelem.utils.DataUtils.addDays;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -20,56 +20,56 @@ public class MovieRentalService {
 	private SPCService spcService;
 	private EmailService emailService;
 	
-	public MovieRental alugarFilme(User usuario, List<Movie> filmes) throws MovieOutOfStockException, MovieRentalException  {
+	public MovieRental rentMovie(User usuario, List<Movie> movies) throws MovieOutOfStockException, MovieRentalException  {
 		
-		if (filmes == null || filmes.isEmpty() ) {
-			throw new MovieRentalException("Filme vazio");
+		if (movies == null || movies.isEmpty() ) {
+			throw new MovieRentalException("Movie is empty");
 		}
 		
-		for (Movie filme: filmes) {
-			if (filme.getEstoque() == 0 ) {
+		for (Movie movie: movies) {
+			if (movie.getStock() == 0 ) {
 				throw new MovieOutOfStockException();
 			}
 		}
 		
 		if (usuario == null) {
-			throw new MovieRentalException("Usuario vazio");
+			throw new MovieRentalException("User is empty");
 		}
 		
 		if (spcService.hasNegativeScore(usuario)) {
-			throw new MovieRentalException("Usuário Negativado");
+			throw new MovieRentalException("User denied");
 		}
 		
-		MovieRental locacao = new MovieRental();
-		locacao.setFilmes(filmes);
-		locacao.setUsuario(usuario);
-		locacao.setDataLocacao(new Date());
-		locacao.setValor(getValorTotalFilmes(filmes));
+		MovieRental movieRental = new MovieRental();
+		movieRental.setMovies(movies);
+		movieRental.setUser(usuario);
+		movieRental.setRentalDate(new Date());
+		movieRental.setPrice(getTotalPrice(movies));
 			
 		//Entrega no dia seguinte
-		Date dataEntrega = new Date();
-		dataEntrega = adicionarDias(dataEntrega, 1);
+		Date dataReturn = new Date();
+		dataReturn = addDays(dataReturn, 1);
 		
-		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY)) {
-			dataEntrega = adicionarDias(dataEntrega, 1);
+		if(DataUtils.checkDayOfWeek(dataReturn, Calendar.SUNDAY)) {
+			dataReturn = addDays(dataReturn, 1);
 		}
 		
-		locacao.setDataRetorno(dataEntrega);
+		movieRental.setRentalReturnDate(dataReturn);
 		
 		//Salvando a locacao...	
-		dao.salvar(locacao);
+		dao.save(movieRental);
 		
-		return locacao;
+		return movieRental;
 	}
 	
 	public void notifyDelay() {
 		List<MovieRental> rents = dao.getDelayedRentals();
 		for(MovieRental rent: rents) {
-			emailService.notifyDelay(rent.getUsuario());
+			emailService.notifyDelay(rent.getUser());
 		}
 	}
 	
-	public void setLocacaoDAO(MovieRentalDAO dao) {
+	public void setMovieRentalDAO(MovieRentalDAO dao) {
 		this.dao = dao;
 	}
 	
@@ -81,21 +81,21 @@ public class MovieRentalService {
 		this.emailService = emailService;
 	}
 	
-	public Double getValorTotalFilmes(List<Movie> filmes) {
-		// desconto de 25% no terceiro filme
+	public Double getTotalPrice(List<Movie> movies) {
+		// desconto de 25% no terceiro movie
 		Double tot = 0d;
 		int count = 1;
-		for(Movie filme: filmes) {
+		for(Movie movie: movies) {
 			if ( count == 3) {
-				tot += filme.getPrecoLocacao() * 0.75;
+				tot += movie.getRentalPrice() * 0.75;
 			} else if ( count == 4 ){
-				tot += filme.getPrecoLocacao() * 0.50;
+				tot += movie.getRentalPrice() * 0.50;
 			} else if ( count == 5) {
-				tot += filme.getPrecoLocacao() * 0.25;
+				tot += movie.getRentalPrice() * 0.25;
 			} else if ( count == 6) {
-				tot += filme.getPrecoLocacao() * 0;
+				tot += movie.getRentalPrice() * 0;
 			} else {
-				tot += filme.getPrecoLocacao();
+				tot += movie.getRentalPrice();
 			}
 			count++;
 		}

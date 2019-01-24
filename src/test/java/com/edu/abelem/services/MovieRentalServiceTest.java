@@ -1,11 +1,11 @@
-package br.ce.wcaquino.servicos;
+package com.edu.abelem.services;
 
-import static br.ce.wcaquino.builders.LocacaoBuilder.oneRental;
-import static br.ce.wcaquino.builders.MovieBuilder.oneMovie;
-import static br.ce.wcaquino.builders.UsuarioBuilder.oneUser;
-import static br.ce.wcaquino.matchers.MatchersProprios.isDaysInterval;
-import static br.ce.wcaquino.matchers.MatchersProprios.isOnMonday;
-import static br.ce.wcaquino.matchers.MatchersProprios.isToday;
+import static com.edu.abelem.builders.MovieRentalBuilder.oneRental;
+import static com.edu.abelem.builders.MovieBuilder.oneMovie;
+import static com.edu.abelem.builders.UserBuilder.oneUser;
+import static com.edu.abelem.matchers.OwnMatchers.isDaysInterval;
+import static com.edu.abelem.matchers.OwnMatchers.isOnMonday;
+import static com.edu.abelem.matchers.OwnMatchers.isToday;
 import static com.edu.abelem.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -28,6 +28,7 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
+import com.edu.abelem.builders.MovieBuilder;
 import com.edu.abelem.dao.MovieRentalDAO;
 import com.edu.abelem.entity.Movie;
 import com.edu.abelem.entity.MovieRental;
@@ -39,9 +40,7 @@ import com.edu.abelem.services.MovieRentalService;
 import com.edu.abelem.services.SPCService;
 import com.edu.abelem.utils.DataUtils;
 
-import br.ce.wcaquino.builders.MovieBuilder;
-
-public class LocacaoServiceTest {
+public class MovieRentalServiceTest {
 
 	private MovieRentalService service;
 	private MovieRentalDAO dao;
@@ -68,9 +67,9 @@ public class LocacaoServiceTest {
 	public void setup() {
 		service = new MovieRentalService();
 		
-		// dao = new LocacaoDAOFake();
+		// dao = new MovieRentalDAOFake();
 		dao = Mockito.mock(MovieRentalDAO.class); 
-		service.setLocacaoDAO(dao);
+		service.setMovieRentalDAO(dao);
 		
 		spcService= Mockito.mock(SPCService.class);
 		service.setSPCService(spcService);
@@ -87,20 +86,20 @@ public class LocacaoServiceTest {
 	@Test
 	public void shouldRentMovie() throws Exception {
 		
-		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		Assume.assumeFalse(DataUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
 		
 		User usuario = oneUser().now();
 		// List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5.0), new Filme("Filme 2", 2, 5.0));
 		 List<Movie> filmes = Arrays.asList(oneMovie().now(), oneMovie().now());
 
 		// acao
-		MovieRental locacao = service.alugarFilme(usuario, filmes);
+		MovieRental locacao = service.rentMovie(usuario, filmes);
 
-		error.checkThat(locacao.getValor(), is(equalTo(8.0)));
-		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-		error.checkThat(locacao.getDataLocacao(), isToday());
-		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), is(true));
-		error.checkThat(locacao.getDataRetorno(), isDaysInterval(1));
+		error.checkThat(locacao.getPrice(), is(equalTo(8.0)));
+		error.checkThat(DataUtils.isSameDate(locacao.getRentalDate(), new Date()), is(true));
+		error.checkThat(locacao.getRentalDate(), isToday());
+		error.checkThat(DataUtils.isSameDate(locacao.getRentalReturnDate(), DataUtils.obterDataComDiferencaDias(1)), is(true));
+		error.checkThat(locacao.getRentalReturnDate(), isDaysInterval(1));
 	}
 	
 	@Test
@@ -129,7 +128,7 @@ public class LocacaoServiceTest {
 		List<Movie> filmes = Arrays.asList(MovieBuilder.oneMovieOutstock().now(), oneMovie().now());
 
 		// acao
-		service.alugarFilme(usuario, filmes);
+		service.rentMovie(usuario, filmes);
 		System.out.println("Forma elegante");
 	}
 
@@ -139,7 +138,7 @@ public class LocacaoServiceTest {
 		List<Movie> filmes = Arrays.asList(oneMovie().now(), oneMovie().now());
 
 		try {
-			service.alugarFilme(usuario, filmes);
+			service.rentMovie(usuario, filmes);
 			Assert.fail();
 		} catch (MovieRentalException locException) {
 			Assert.assertThat(locException.getMessage(), is("Usuario vazio"));
@@ -157,7 +156,7 @@ public class LocacaoServiceTest {
 		exception.expectMessage("Filme vazio");
 
 		// acao
-		service.alugarFilme(usuario, filmes);
+		service.rentMovie(usuario, filmes);
 
 //		System.out.println("Forma nova");
 	}
@@ -168,9 +167,9 @@ public class LocacaoServiceTest {
 		User usuario = oneUser().now();
 		List<Movie> filmes = Arrays.asList(oneMovie().now(),oneMovie().now(),oneMovie().now() );
 		// action
-		MovieRental result = service.alugarFilme(usuario, filmes);
+		MovieRental result = service.rentMovie(usuario, filmes);
 		// evaluation 4+4+3
-		assertThat(result.getValor(), is(11.0));
+		assertThat(result.getPrice(), is(11.0));
 	}
 
 	@Test
@@ -179,9 +178,9 @@ public class LocacaoServiceTest {
 		User usuario = oneUser().now();
 		List<Movie> filmes = Arrays.asList(oneMovie().now(),oneMovie().now(),oneMovie().now(),oneMovie().now());
 		// action
-		MovieRental result = service.alugarFilme(usuario, filmes);
+		MovieRental result = service.rentMovie(usuario, filmes);
 		// evaluation 4+4+3+2
-		assertThat(result.getValor(), is(13.0));
+		assertThat(result.getPrice(), is(13.0));
 	}
 
 	@Test
@@ -190,10 +189,10 @@ public class LocacaoServiceTest {
 		User usuario = oneUser().now();
 		List<Movie> filmes = Arrays.asList(oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now());
 		// action
-		MovieRental result = service.alugarFilme(usuario, filmes);
+		MovieRental result = service.rentMovie(usuario, filmes);
 
 		// evaluation 4+4+3+2+1
-		assertThat(result.getValor(), is(14.0));
+		assertThat(result.getPrice(), is(14.0));
 	}
 
 	@Test
@@ -202,26 +201,26 @@ public class LocacaoServiceTest {
 		User usuario = oneUser().now();
 		List<Movie> filmes = Arrays.asList(oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now());
 		// action
-		MovieRental result = service.alugarFilme(usuario, filmes);
+		MovieRental result = service.rentMovie(usuario, filmes);
 		// evaluation 4+4+3+2+1
-		assertThat(result.getValor(), is(14.0));
+		assertThat(result.getPrice(), is(14.0));
 	}
 
 	@Test
 	public void shouldReturnAMovieOnMondayWhenRentInSaturday() throws MovieOutOfStockException, MovieRentalException {
 		// vai executar, somente se for sabado..
-		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		Assume.assumeTrue(DataUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
 		// scene
 		User usuario = oneUser().now();
 		List<Movie> filmes = Arrays.asList(oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now());
 		// action
-		MovieRental result = service.alugarFilme(usuario, filmes);
+		MovieRental result = service.rentMovie(usuario, filmes);
 		// evaluation
-		// boolean isMonday = DataUtils.verificarDiaSemana(result.getDataRetorno(), Calendar.MONDAY);
+		// boolean isMonday = DataUtils.verificarDiaSemana(result.getRentalReturnDate(), Calendar.MONDAY);
 		// Assert.assertTrue(isMonday);
-		// assertThat(result.getDataRetorno(), new DiaSemanaMatcher(Calendar.MONDAY));
-		// assertThat(result.getDataRetorno(), isOn(Calendar.MONDAY));
-		assertThat(result.getDataRetorno(), isOnMonday());
+		// assertThat(result.getRentalReturnDate(), new DiaSemanaMatcher(Calendar.MONDAY));
+		// assertThat(result.getRentalReturnDate(), isOn(Calendar.MONDAY));
+		assertThat(result.getRentalReturnDate(), isOnMonday());
 	}
 	
 	@Test
@@ -235,6 +234,6 @@ public class LocacaoServiceTest {
 		exception.expect(MovieRentalException.class);
 		exception.expectMessage("Usuário Negativado");
 		
-		service.alugarFilme(user, filmes);
+		service.rentMovie(user, filmes);
 	}
 }

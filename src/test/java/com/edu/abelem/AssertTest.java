@@ -1,4 +1,4 @@
-package br.ce.wcaquino;
+package com.edu.abelem;
 
 import org.junit.Assert;
 import org.junit.Test;

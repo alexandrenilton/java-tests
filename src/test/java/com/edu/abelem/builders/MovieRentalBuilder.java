@@ -53,6 +53,13 @@ public class MovieRentalBuilder {
 		element.setRentalReturnDate(param);
 		return this;
 	}
+	
+	public MovieRentalBuilder delayed() {
+		element.setRentalDate(DataUtils.obterDataComDiferencaDias(-4));
+		element.setRentalReturnDate(DataUtils.obterDataComDiferencaDias(-2));
+		return this;
+	}
+	
 
 	public MovieRentalBuilder withValue(Double param) {
 		element.setPrice(param);

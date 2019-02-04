@@ -106,11 +106,18 @@ public class MovieRentalServiceTest {
 	public void shouldSendEmailToDelayedRentals() {
 		// scene
 		User user = oneUser().now();
+		User user2 = oneUser().withName("Alexandre").now();
+		
 		List<MovieRental> rentals = Arrays.asList(
 				oneRental()
 					.withUser(user)
 					.withDateReturn(obterDataComDiferencaDias(-2))
-					.now());
+					.now(),
+				
+				oneRental()
+					.withUser(user2)
+					.now() );
+		
 		Mockito.when(dao.getDelayedRentals()).thenReturn(rentals);
 		
 		// action
@@ -141,7 +148,7 @@ public class MovieRentalServiceTest {
 			service.rentMovie(usuario, filmes);
 			Assert.fail();
 		} catch (MovieRentalException locException) {
-			Assert.assertThat(locException.getMessage(), is("Usuario vazio"));
+			Assert.assertThat(locException.getMessage(), is("User is empty"));
 		}
 
 //		System.out.println("Forma robusta - Maior controle");
@@ -153,7 +160,7 @@ public class MovieRentalServiceTest {
 		List<Movie> filmes = null;
 
 		exception.expect(MovieRentalException.class);
-		exception.expectMessage("Filme vazio");
+		exception.expectMessage("Movie is empty");
 
 		// acao
 		service.rentMovie(usuario, filmes);
@@ -190,8 +197,7 @@ public class MovieRentalServiceTest {
 		List<Movie> filmes = Arrays.asList(oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now());
 		// action
 		MovieRental result = service.rentMovie(usuario, filmes);
-
-		// evaluation 4+4+3+2+1
+		// check 4+4+3+2+1
 		assertThat(result.getPrice(), is(14.0));
 	}
 
@@ -202,7 +208,7 @@ public class MovieRentalServiceTest {
 		List<Movie> filmes = Arrays.asList(oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now());
 		// action
 		MovieRental result = service.rentMovie(usuario, filmes);
-		// evaluation 4+4+3+2+1
+		// check 4+4+3+2+1
 		assertThat(result.getPrice(), is(14.0));
 	}
 
@@ -225,15 +231,25 @@ public class MovieRentalServiceTest {
 	
 	@Test
 	public void shouldNotRentAMovieToNegativeScore() throws MovieOutOfStockException, MovieRentalException {
+		// scene
 		User user = oneUser().now();
+		User user2 = oneUser().withName("User2").now();
 		List<Movie> filmes = Arrays.asList(oneMovie().now(), oneMovie().now());
 		
 		//Quando o methodo hasNegativeScore, passando user for passado, ele vai retornar TRUE
 		Mockito.when(spcService.hasNegativeScore(user)).thenReturn(true);
 		
-		exception.expect(MovieRentalException.class);
-		exception.expectMessage("Usuário Negativado");
+		//action
+		try {
+			service.rentMovie(user, filmes);
+			
+		//check
+			Assert.fail();
+		} catch (MovieRentalException ex) {
+			Assert.assertThat(ex.getMessage(), is("User denied"));
+		}
 		
-		service.rentMovie(user, filmes);
+		//Mockito.verify(spcService).hasNegativeScore(user2);
+		Mockito.verify(spcService).hasNegativeScore(user);
 	}
 }

@@ -65,8 +65,11 @@ public class MovieRentalService {
 	public void notifyDelay() {
 		List<MovieRental> rents = dao.getDelayedRentals();
 		for(MovieRental rent: rents) {
-			emailService.notifyDelay(rent.getUser());
+			if (rent.getRentalReturnDate().before(new Date())) {
+				emailService.notifyDelay(rent.getUser());
+			}
 		}
+		
 	}
 	
 	public void setMovieRentalDAO(MovieRentalDAO dao) {

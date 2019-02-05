@@ -107,16 +107,12 @@ public class MovieRentalServiceTest {
 		// scene
 		User user = oneUser().now();
 		User user2 = oneUser().withName("Alexandre").now();
+		User user3 = oneUser().withName("Another user").now();
 		
 		List<MovieRental> rentals = Arrays.asList(
-				oneRental()
-					.withUser(user)
-					.withDateReturn(obterDataComDiferencaDias(-2))
-					.now(),
-				
-				oneRental()
-					.withUser(user2)
-					.now() );
+				oneRental().delayed().withUser(user).now(),
+				oneRental().withUser(user2).now(),
+				oneRental().delayed().withUser(user3).now() );
 		
 		Mockito.when(dao.getDelayedRentals()).thenReturn(rentals);
 		
@@ -125,8 +121,19 @@ public class MovieRentalServiceTest {
 		
 		
 		// verificacao se o metodo notifyDelay Passando user foi chamado
+		Mockito.verify(emailService, Mockito.times(2)).notifyDelay(Mockito.any(User.class));
 		Mockito.verify(emailService).notifyDelay(user);
+		Mockito.verify(emailService).notifyDelay(user3);
+		Mockito.verify(emailService, Mockito.never()).notifyDelay(user2);
 		
+		// deve ser enviado pelo menos 2 emails
+		Mockito.verify(emailService, Mockito.atLeastOnce()).notifyDelay(user3);
+		
+		// verifica se houve mais interações alem das que descrevi no código 
+		Mockito.verifyNoMoreInteractions(emailService);
+		
+		// Garantir que o servico SPC nunca será executado nesses cenários de testes
+		Mockito.verifyZeroInteractions(spcService);
 	}
 	
 	@Test(expected = MovieOutOfStockException.class)
@@ -237,7 +244,8 @@ public class MovieRentalServiceTest {
 		List<Movie> filmes = Arrays.asList(oneMovie().now(), oneMovie().now());
 		
 		//Quando o methodo hasNegativeScore, passando user for passado, ele vai retornar TRUE
-		Mockito.when(spcService.hasNegativeScore(user)).thenReturn(true);
+		Mockito.when(spcService.hasNegativeScore(Mockito.any(User.class)))
+				.thenReturn(true);
 		
 		//action
 		try {

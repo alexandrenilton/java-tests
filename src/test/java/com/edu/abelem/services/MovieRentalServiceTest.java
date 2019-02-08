@@ -222,7 +222,7 @@ public class MovieRentalServiceTest {
 	@Test
 	public void shouldReturnAMovieOnMondayWhenRentInSaturday() throws MovieOutOfStockException, MovieRentalException {
 		// vai executar, somente se for sabado..
-		Assume.assumeTrue(DataUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
+		//Assume.assumeTrue(DataUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
 		// scene
 		User usuario = oneUser().now();
 		List<Movie> filmes = Arrays.asList(oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now(), oneMovie().now());
@@ -233,7 +233,7 @@ public class MovieRentalServiceTest {
 		// Assert.assertTrue(isMonday);
 		// assertThat(result.getRentalReturnDate(), new DiaSemanaMatcher(Calendar.MONDAY));
 		// assertThat(result.getRentalReturnDate(), isOn(Calendar.MONDAY));
-		assertThat(result.getRentalReturnDate(), isOnMonday());
+		assertThat(result.getRentalReturnDate(), isOnMonday()); 
 	}
 	
 	@Test
